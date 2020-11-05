@@ -41,7 +41,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private AllSongFragment mAllSongFragment = new AllSongFragment();
+    private AllSongFragment mAllSongFragment;
     private FavoriteSongFragment mFavoriteSongFragment = new FavoriteSongFragment();
     private MediaPlaybackService mMediaService;
     private DrawerLayout mDrawerLayout;
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //Permission READ_EXTERNAL_STORAGE
         if (isReadStoragePermissionGranted()) {
             SongProvider.getInstance(this);
+            createMainView();
         }
 
         //Bind to service if Service is Running
@@ -143,7 +144,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         //Create Fragment View
-        createMainView();
+
+
     }
 
     /**
@@ -173,6 +175,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
         return false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!mIsBindService) {
+            if (isMyServiceRunning(MediaPlaybackService.class)) {
+                bindMediaService();
+            }
+        }
     }
 
     /**
@@ -234,6 +246,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Show All Song Fragment
      */
     public void showAllSongFragment(int intRes) {
+        if (mAllSongFragment == null) {
+            mAllSongFragment = new AllSongFragment();
+        }
         getSupportFragmentManager().beginTransaction()
                 .replace(intRes, mAllSongFragment)
                 .commit();
@@ -361,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         /*Tuantqd: Unbind to service*/
         if (mIsBindService) {
             unbindService(mServiceConnection);
+            mIsBindService = false;
         }
         unregisterReceiver(mMainActivityBroadcast);
     }
@@ -425,11 +441,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 switch (action) {
                     case MediaPlaybackService.UNBIND_SERVICE:
                         if (ismIsBindService()) {
-                             mIsBindService = false;
-
+                            mIsBindService = false;
                             unbindService(mServiceConnection);
-                    }
-                    break;
+                        }
+                        break;
                 }
             }
         }

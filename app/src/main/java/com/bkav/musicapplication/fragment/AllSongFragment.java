@@ -39,8 +39,8 @@ public class AllSongFragment extends BaseFragment {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             if(mMainActivity.ismIsBindService()) {
-                if (mMainActivity.getMediaService() != null &&
-                        mSongPosition != mMainActivity.getMediaService().getmMediaPosition()
+                if (mMainActivity.getMediaService() != null
+                        && mSongPosition != mMainActivity.getMediaService().getmMediaPosition()
                         || mIsPlay != mMainActivity.getMediaService().getmMediaPlayer().isPlaying()) {
                     upDateSmallPlayingRelativeLayout(mListSongAdapter, mSongAdapter, mRecyclerView);
                     mSongAdapter.notifyDataSetChanged();
@@ -56,21 +56,7 @@ public class AllSongFragment extends BaseFragment {
         }
     };
 
-    /**
-     * Tuantqd
-     * Create all Items RecycleView
-     *
-     * @param view
-     */
-    public void createRecycleView(View view) {
-        //Read all Song with SongProvider
-        mListSongAdapter = SongProvider.getInstance(getActivity().getApplicationContext()).getmListSong();
 
-        mSongAdapter = new SongAdapter(mListSongAdapter, mMainActivity);
-        mRecyclerView = view.findViewById(R.id.list_song_recycleview);
-        mRecyclerView.setAdapter(mSongAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mMainActivity.getApplicationContext()));
-    }
 
     @Nullable
     @Override
@@ -97,9 +83,20 @@ public class AllSongFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    /**
+     * Tuantqd
+     * Create all Items RecycleView
+     *
+     * @param view
+     */
+    public void createRecycleView(View view) {
+        //Read all Song with SongProvider
+        mListSongAdapter = SongProvider.getInstance(getActivity().getApplicationContext()).getmListSong();
+
+        mSongAdapter = new SongAdapter(mListSongAdapter, mMainActivity);
+        mRecyclerView = view.findViewById(R.id.list_song_recycleview);
+        mRecyclerView.setAdapter(mSongAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mMainActivity.getApplicationContext()));
     }
 
 

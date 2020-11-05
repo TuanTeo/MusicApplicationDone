@@ -1,7 +1,10 @@
 package com.bkav.musicapplication.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -43,6 +46,18 @@ public class MediaPlaybackActivity extends AppCompatActivity {
         bindMediaService();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mMainActivityBroadcast, new IntentFilter(MediaPlaybackService.UNBIND_SERVICE));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(mMainActivityBroadcast);
+    }
+
     /**
      * Tuantqd
      * Bind to Service
@@ -82,5 +97,33 @@ public class MediaPlaybackActivity extends AppCompatActivity {
      */
     public MediaPlaybackService getmMediaService() {
         return mMediaService;
+    }
+
+    /**
+     * Tuantqd
+     * BroadcastReceiver object to receiver Action UNBIND_SERVICE from Service
+     */
+    private BroadcastReceiver mMainActivityBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null) {
+                switch (action) {
+                    case MediaPlaybackService.UNBIND_SERVICE:
+                        if (ismIsBindService()) {
+                            mIsBindService = false;
+                            unbindService(mServiceConnection);
+                        }
+                        break;
+                }
+            }
+        }
+    };
+
+    private boolean ismIsBindService() {
+        if(mIsBindService){
+            return true;
+        }
+        return false;
     }
 }

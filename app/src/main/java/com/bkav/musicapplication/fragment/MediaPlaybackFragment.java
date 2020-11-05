@@ -177,7 +177,7 @@ public class MediaPlaybackFragment extends Fragment
 //          message.arg1 = mMediaPlaybackService.getmMediaPlayer().getCurrentPosition();
             mHandler.sendMessage(message);
 
-            if (mMediaPlaybackService.getmMediaPlayer().isPlaying()) {
+            if (mMediaPlaybackService.isPlaying()) {
                 mPlayImageButton.setImageResource(R.mipmap.ic_media_pause_light);
             } else {
                 mPlayImageButton.setImageResource(R.mipmap.ic_media_play_light);
